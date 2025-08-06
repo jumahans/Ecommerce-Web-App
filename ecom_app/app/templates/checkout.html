@@ -1,0 +1,38 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block content %}
+<div class="card fade-in" style="width: 100%; max-width: 600px; margin: 3rem auto;">
+    <h2 style="font-size: 2rem; color: var(--primary-color); font-weight: 700; margin-bottom: 2rem;">Checkout</h2>
+    <form method="POST" action="" style="display: flex; flex-direction: column; gap: 1.5rem;">
+        {% csrf_token %}
+        <div class="input-group">
+            <label for="full_name">Full Name</label>
+            <input type="text" id="full_name" name="full_name" placeholder="Enter your full name" required>
+        </div>
+        <div class="input-group">
+            <label for="address">Shipping Address</label>
+            <input type="text" id="address" name="address" placeholder="Enter your shipping address" required>
+        </div>
+        <div class="input-group">
+            <label for="city">City</label>
+            <input type="text" id="city" name="city" placeholder="Enter your city" required>
+        </div>
+        <div class="input-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required>
+        </div>
+        <div class="input-group">
+            <label for="payment_method">Payment Method</label>
+            <select id="payment_method" name="payment_method" required>
+                <option value="">Select a payment method</option>
+                <option value="credit_card">Credit Card</option>
+                <option value="paypal">PayPal</option>
+                <option value="cod">Cash on Delivery</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary pop" style="width: 100%;">Place Order</button>
+    </form>
+</div>
+{% endblock %}
+

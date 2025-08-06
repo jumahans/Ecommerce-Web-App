@@ -1,0 +1,331 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'styles/main.css' %}">
+    <link rel="icon" href="{% static 'images/logo.webp'%}">
+    <title>Welcome | ShopSphere</title>
+    <style>
+        .landing-hero {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: stretch;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(120deg, #f9fafb 60%, #eaf4ff 100%);
+        }
+        .hero-content {
+            flex: 2 1 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 3rem 2rem 2rem 4rem;
+            min-width: 320px;
+        }
+        .hero-logo {
+            width: 70px;
+            margin-bottom: 1.5rem;
+        }
+        .hero-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: var(--gray-medium);
+            margin-bottom: 2.5rem;
+        }
+        .features-row {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2.5rem;
+            flex-wrap: wrap;
+        }
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            background: #fff;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 0.7rem 1.2rem;
+            font-size: 1rem;
+            color: var(--primary-dark);
+            font-weight: 600;
+        }
+        .feature img {
+            width: 28px;
+            height: 28px;
+        }
+        .featured-products {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1.2rem;
+            margin-bottom: 2.5rem;
+        }
+        .featured-card {
+            background: #fff;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        .featured-card img {
+            width: 90px;
+            height: 90px;
+            object-fit: contain;
+            margin-bottom: 0.7rem;
+            transition: transform 0.4s;
+        }
+        .featured-card:hover img {
+            transform: scale(1.08) rotate(-6deg);
+        }
+        .featured-card span {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        .featured-card::after {
+            content: '';
+            position: absolute;
+            top: -30px; left: -30px;
+            width: 60px; height: 60px;
+            background: var(--primary-color);
+            opacity: 0.08;
+            border-radius: 50%;
+            z-index: 0;
+        }
+        .login-side {
+            flex: 1 1 340px;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 3rem 2rem;
+            min-width: 320px;
+            box-shadow: -2px 0 24px rgba(74,108,247,0.04);
+        }
+        .header-landing {
+            width: 100%;
+            background: linear-gradient(90deg, var(--primary-dark) 0%, var(--primary-color) 100%);
+            color: #fff;
+            padding: 1.2rem 0;
+            box-shadow: 0 2px 12px rgba(74,108,247,0.08);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-landing .brand {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        .header-landing .brand img {
+            width: 40px;
+            height: 40px;
+        }
+        .header-landing nav {
+            display: flex;
+            gap: 2rem;
+        }
+        .header-landing nav a {
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .header-landing nav a:hover {
+            color: #ffeaea;
+        }
+        .footer-landing {
+            width: 100%;
+            background: #222;
+            color: #fff;
+            padding: 2rem 0 1rem 0;
+            text-align: center;
+            font-size: 1rem;
+            margin-top: 3rem;
+            letter-spacing: 0.5px;
+        }
+        .footer-landing .footer-links {
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        .footer-landing .footer-links a {
+            color: #fff;
+            text-decoration: underline;
+            font-size: 1rem;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+        .footer-landing .footer-links a:hover {
+            opacity: 1;
+        }
+        @media (max-width: 900px) {
+            .landing-hero { flex-direction: column; padding: 0; }
+            .hero-content, .login-side { padding: 2rem 1rem; }
+            .header-landing { flex-direction: column; gap: 1rem; }
+        }
+    </style>
+</head>
+<body style="background: var(--background-light); font-family: 'Segoe UI', sans-serif;">
+    <header class="header-landing" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background-color: white; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+        <div class="brand" style="display: flex; align-items: center; gap: 10px;">
+            <img src="{% static 'images/logo.webp' %}" alt="ShopSphere Logo" style="height: 40px;">
+            <span style="font-weight: bold; font-size: 1.5rem; color: var(--primary-color);">ShopSphere</span>
+        </div>
+        <nav style="display: flex; gap: 1.2rem;">
+            <a href="#features">Features</a>
+            <a href="#categories">Categories</a>
+            <a href="#why-us">Why Us</a>
+            <a href="#brands">Brands</a>
+            <a href="#login">Login</a>
+            <a href="#register">Register</a>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="landing-hero" style="background: url('https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat; padding: 5rem 2rem; color: white;">
+        <div class="hero-content" style="max-width: 700px; margin: auto; text-align: center;">
+            <h1 style="font-size: 3rem; font-weight: bold;">Step Into Style with ShopSphere</h1>
+            <p style="font-size: 1.2rem; margin-top: 1rem;">Discover top-brand sneakers, fast delivery, and secure shopping — all in one place.</p>
+            <a href="{% url 'register' %}" class="btn btn-primary" style="margin-top: 2rem; padding: 12px 24px; background-color: var(--primary-color); color: white; border-radius: 8px; font-weight: 500;">Start Shopping</a>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" style="padding: 4rem 2rem; background-color: #f9f9f9;">
+        <h2 style="text-align: center; font-size: 2rem; color: var(--primary-color); margin-bottom: 2rem;">Features You'll Love</h2>
+        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 2rem;">
+            <div style="flex: 1; min-width: 220px; max-width: 280px; text-align: center;">
+                <img src="{% static 'images/five.png' %}" alt="Easy Shopping" style="width: 100%; border-radius: 12px;">
+                <h3>Easy Shopping</h3>
+                <p>Enjoy a seamless shopping experience from search to checkout.</p>
+            </div>
+            <div style="flex: 1; min-width: 220px; max-width: 280px; text-align: center;">
+                <img src="{% static 'images/one.jpg' %}" alt="Top Categories" style="width: 100%; border-radius: 12px;">
+                <h3>Top Categories</h3>
+                <p>Find everything from sneakers to streetwear and accessories.</p>
+            </div>
+            <div style="flex: 1; min-width: 220px; max-width: 280px; text-align: center;">
+                <img src="{% static 'images/seven.jpg' %}" alt="Secure Accounts" style="width: 100%; border-radius: 12px;">
+                <h3>Secure Accounts</h3>
+                <p>Your profile and data are safe with our encrypted systems.</p>
+            </div>
+            <div style="flex: 1; min-width: 220px; max-width: 280px; text-align: center;">
+                <img src="{% static 'images/eight.jpg' %}" alt="Smart Search" style="width: 100%; border-radius: 12px;">
+                <h3>Smart Search</h3>
+                <p>Quickly find what you want with intelligent filtering and suggestions.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories / Featured Products -->
+    <section id="categories" style="padding: 4rem 2rem;">
+        <h2 style="text-align: center; font-size: 2rem; color: var(--primary-color); margin-bottom: 2rem;">Shop by Category</h2>
+        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 2rem;">
+            <div class="featured-card" style="text-align: center;">
+                <img src="{% static 'images/one.jpg' %}" alt="Men Sneakers" style="width: 250px; height: auto; border-radius: 12px;">
+                <span>Men's Sneakers</span>
+            </div>
+            <div class="featured-card" style="text-align: center;">
+                <img src="{% static 'images/two.jpg' %}" alt="Women Sneakers" style="width: 250px; height: auto; border-radius: 12px;">
+                <span>Women's Sneakers</span>
+            </div>
+            <div class="featured-card" style="text-align: center;">
+                <img src="{% static 'images/three.webp' %}" alt="Running Shoes" style="width: 250px; height: auto; border-radius: 12px;">
+                <span>Running Shoes</span>
+            </div>
+            <div class="featured-card" style="text-align: center;">
+                <img src="{% static 'images/four.jpg' %}" alt="Sneaker Accessories" style="width: 250px; height: auto; border-radius: 12px;">
+                <span>Accessories</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Us Section -->
+    <section id="why-us" style="padding: 4rem 2rem; background-color: #f4f4f4;">
+        <h2 style="text-align: center; font-size: 2rem; color: var(--primary-color); margin-bottom: 2rem;">Why Shop With Us?</h2>
+        <ul style="max-width: 800px; margin: auto; font-size: 1.1rem; line-height: 1.8;">
+            <li>✔ Trusted by thousands of satisfied customers</li>
+            <li>✔ Free returns within 7 days</li>
+            <li>✔ Lightning-fast shipping and real-time tracking</li>
+            <li>✔ 100% genuine products from top brands</li>
+        </ul>
+    </section>
+
+    <!-- Brands Section -->
+    <section id="brands" style="padding: 3rem 2rem; text-align: center;">
+        <h2 style="font-size: 2rem; color: var(--primary-color); margin-bottom: 2rem;">We Stock Top Brands</h2>
+        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 2rem;">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Logo_NIKE.svg/512px-Logo_NIKE.svg.png" alt="Nike" style="height: 60px;">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/Adidas_Logo.svg/512px-Adidas_Logo.svg.png" alt="Adidas" style="height: 60px;">
+            <img src="{% static 'images/puma.png' %}" alt="Puma" style="height: 60px;">
+            <img src="{% static 'images/under.png' %}" alt="Under Armour" style="height: 60px;">
+        </div>
+    </section>
+
+    <!-- Your untouched login section remains the same -->
+    <div class="login-side fade-in" id="login">
+        <form action="{% url 'login' %}" method="POST" style="width: 100%; max-width: 340px;">
+            {% csrf_token %}
+            <h2 style="margin-bottom: 30px; font-size: 2rem; color: var(--primary-color); font-weight: 700; text-align: center;">Sign In</h2>
+            <div class="input-group">
+                <label for="username">Username</label>
+                <input type="text" name="username" placeholder="Enter your username or email" required>
+            </div>
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" name="password" placeholder="Enter your password" required>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: -10px; margin-bottom: 1.2rem;">
+                <label style="display: flex; align-items: center; cursor: pointer; font-size: 14px;">
+                    <input type="checkbox" style="width: auto; margin-right: 8px;"> Remember me
+                </label>
+                <a href="#" style="color: var(--primary-color); text-decoration: none; font-size: 14px;">Forgot password?</a>
+            </div>
+            <button type="submit" class="btn btn-primary pop" style="width: 100%;">Sign In</button>
+            {% if error_message %}
+                <div class="alert alert-error fade-in" style="margin-top: 1rem;">{{ error_message }}</div>
+            {% endif %}
+            <div style="text-align: center; font-size: 14px; color: var(--gray-medium); margin-top: 20px;">
+                Don't have an account? <a href="{% url 'register'%}" style="color: var(--primary-color); font-weight: 500;">Create Account</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer-landing" style="padding: 2rem; background-color: #222; color: white; text-align: center;">
+        <div class="footer-links" style="margin-bottom: 1rem;">
+            <a href="#features" style="margin: 0 1rem; color: white;">Features</a>
+            <a href="#categories" style="margin: 0 1rem; color: white;">Categories</a>
+            <a href="#why-us" style="margin: 0 1rem; color: white;">Why Us</a>
+            <a href="#brands" style="margin: 0 1rem; color: white;">Brands</a>
+            <a href="#login" style="margin: 0 1rem; color: white;">Login</a>
+            <a href="#register" style="margin: 0 1rem; color: white;">Register</a>
+        </div>
+        <div>&copy; {{ now|date:'Y' }} ShopSphere. All rights reserved. | Designed with ❤️ for sneaker lovers.</div>
+    </footer>
+</body>
+
+</html>

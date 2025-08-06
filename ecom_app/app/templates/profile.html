@@ -1,0 +1,287 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+/* Direct inline styles for profile page */
+.profile-container {
+  width: 90%;
+  max-width: 1000px;
+  margin: 2rem auto;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.profile-header {
+  background-color: #ff6b6b;
+  color: white;
+  padding: 2rem;
+  position: relative;
+}
+
+.profile-header h2 {
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.profile-header p {
+  font-size: 1rem;
+  opacity: 0.9;
+}
+
+.profile-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background-color: white;
+  border: 4px solid white;
+  position: absolute;
+  bottom: -60px;
+  right: 2rem;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-content {
+  padding: 2rem;
+  padding-top: 3rem;
+}
+
+.profile-section {
+  margin-bottom: 2rem;
+}
+
+.profile-section h3 {
+  font-size: 1.3rem;
+  color: #333333;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #f1f3f5;
+}
+
+.profile-details {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+.detail-item {
+  margin-bottom: 1rem;
+}
+
+.detail-label {
+  font-size: 0.9rem;
+  color: #868e96;
+  margin-bottom: 0.3rem;
+}
+
+.detail-value {
+  font-size: 1rem;
+  color: #333333;
+  font-weight: 500;
+}
+
+.order-history {
+  margin-top: 2rem;
+}
+
+.order-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.order-table th {
+  background-color: #f1f3f5;
+  color: #333333;
+  padding: 0.8rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.order-table td {
+  padding: 0.8rem;
+  border-bottom: 1px solid #f1f3f5;
+  font-size: 0.9rem;
+}
+
+.order-table tr:last-child td {
+  border-bottom: none;
+}
+
+.order-status {
+  display: inline-block;
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.status-completed {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.status-processing {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.status-cancelled {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.back-to-home-btn {
+  background-color: #ff6b6b;
+  color: white;
+  border: none;
+  padding: 0.8rem 2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+  font-weight: 500;
+  display: inline-block;
+  margin-top: 1rem;
+  text-decoration: none;
+}
+
+.back-to-home-btn:hover {
+  background-color: #e05050;
+}
+
+/* Responsive styles */
+@media screen and (max-width: 768px) {
+  .profile-container {
+    width: 95%;
+  }
+  
+  .profile-avatar {
+    width: 100px;
+    height: 100px;
+    bottom: -50px;
+    right: 1.5rem;
+  }
+  
+  .profile-details {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .order-table {
+    display: block;
+    overflow-x: auto;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .profile-header {
+    padding: 1.5rem;
+  }
+  
+  .profile-header h2 {
+    font-size: 1.5rem;
+  }
+  
+  .profile-avatar {
+    width: 80px;
+    height: 80px;
+    bottom: -40px;
+    right: 1rem;
+  }
+  
+  .profile-content {
+    padding: 1.5rem;
+    padding-top: 2.5rem;
+  }
+  
+  .profile-section h3 {
+    font-size: 1.1rem;
+  }
+  
+  .order-table th, 
+  .order-table td {
+    padding: 0.6rem;
+    font-size: 0.8rem;
+  }
+  
+  .back-to-home-btn {
+    padding: 0.7rem 1.5rem;
+    font-size: 0.9rem;
+    width: 100%;
+    text-align: center;
+  }
+}
+</style>
+
+<div class="profile-container">
+    <div class="profile-header">
+        <h2>{{ user.username }}'s Profile</h2>
+        <p>Member since {{ user.date_joined|date:"F j, Y" }}</p>
+        <div class="profile-avatar">
+            {% if profile.image %}
+                <img src="{{ profile.image.url }}" alt="Profile Avatar">
+            {% else %}
+                <img src="{% static 'images/default-avatar.png' %}" alt="Profile Avatar">
+            {% endif %}
+        </div>
+    </div>
+    <div class="profile-content">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        <div class="profile-section">
+            <h3>Edit Personal Information</h3>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="profile-details">
+                    {{ user_form.as_p }}
+                    {{ profile_form.as_p }}
+                </div>
+                <button type="submit" class="back-to-home-btn">Save Changes</button>
+            </form>
+        </div>
+        <div class="profile-section">
+            <h3>Order History</h3>
+            <div class="order-history">
+                {% if orders %}
+                <table class="order-table">
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Date</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                    </tr>
+                    {% for order in orders %}
+                    <tr>
+                        <td>#{{ order.id }}</td>
+                        <td>{{ order.created_at|date:"M d, Y" }}</td>
+                        <td>sh {{ order.total_price }}</td>
+                        <td>
+                            <span class="order-status status-{{ order.status|lower }}">
+                                {{ order.status }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                {% else %}
+                <p>You haven't placed any orders yet.</p>
+                {% endif %}
+            </div>
+        </div>
+        <a href="{% url 'home' %}" class="back-to-home-btn">Back to Home</a>
+    </div>
+</div>
+{% endblock %}

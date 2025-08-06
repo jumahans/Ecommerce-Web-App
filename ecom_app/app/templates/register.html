@@ -1,0 +1,48 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'styles/main.css' %}">
+    <link rel="icon" href="{% static 'images/logo.webp'%}">
+    <title>Register | ShopSphere</title>
+</head>
+<body style="background: var(--background-light);">
+    <div class="card fade-in" style="width: 100%; max-width: 900px; margin: 3rem auto; display: flex; min-height: 500px; overflow: hidden;">
+        <div style="flex: 1; background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%); color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px; text-align: center;">
+            <p style="font-size: 2rem; font-weight: 600; margin-bottom: 30px; letter-spacing: 1px;">JOIN SHOPSPHERE</p>
+            <img src="{% static 'images/logo.webp' %}" alt="ShopSphere Logo" style="max-width: 180px; margin-top: 20px; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1)); transition: var(--transition);">
+            <p style="font-size: 1rem; margin-top: 30px; font-weight: 400;">Create an account and start shopping today</p>
+        </div>
+        <form action="{% url 'register' %}" method="POST" class="fade-in" style="flex: 1; padding: 50px 40px; display: flex; flex-direction: column; justify-content: center; background: #fff;">
+            {% csrf_token %}
+            <h2 style="margin-bottom: 30px; font-size: 2rem; color: var(--primary-color); font-weight: 700;">Create Account</h2>
+            {% for field in form %}
+                <div class="input-group" style="margin-bottom: 1.2rem;">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}
+                        <small style="color: var(--gray-medium);">{{ field.help_text }}</small>
+                    {% endif %}
+                    {% for error in field.errors %}
+                        <div class="alert alert-error fade-in" style="margin-top: 0.5rem;">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary pop" style="width: 100%;">Create Account</button>
+            {% if form.non_field_errors %}
+                <div class="alert alert-error fade-in" style="margin-top: 1rem;">
+                    {% for error in form.non_field_errors %}
+                        <div>{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <div style="text-align: center; font-size: 14px; color: var(--gray-medium); margin-top: 20px;">
+                Already have an account? <a href="{% url 'login' %}" style="color: var(--primary-color); font-weight: 500;">Sign In</a>
+            </div>
+        </form>
+    </div>
+    <script src="{% static 'script/login.js' %}"></script>
+</body>
+</html>

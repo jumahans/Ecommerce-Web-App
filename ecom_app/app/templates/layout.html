@@ -1,0 +1,90 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'styles/main.css' %}">
+    <link rel="icon" href="{% static 'images/logo.webp'%}">
+    {% block extra_styles %}
+    {% endblock %}
+    <title>Walk it like you talk it</title>
+</head>
+<body>
+    <section class="header">
+        <div class="side-bar bar">
+            <div class="menu_bar">
+                <div class="menu-icon menu">
+                    <img src="{% static 'images/menu (1).png' %}" alt="">
+                </div>
+                <div class="category-icon icon">
+                    <a href="{% url 'profile' %}"><img src="{% static 'images/user.png' %}" alt=""></a>
+                </div>
+                <div class="profile-icon icon">
+                   <a href="{% url 'home' %}"><img src="{% static 'images/categories.png' %}" alt=""></i></a>
+                </div>
+                <div class="cart-icon icon">
+                    <a href="{% url 'cart' %}">
+                        <img src="{% static 'images/shopping-cart.png' %}" alt="Cart">
+                    </a>
+                </div>                
+                <div class="logout-icon icon">
+                    <form action="{% url 'logout' %}" method="POST" style="margin: 0;">
+                        {% csrf_token %}
+                        <button class="bx" type="submit" title="Logout" style="padding: 0; background: none; border: none; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px;">
+                            <img src="{% static 'images/logout-icon.png' %}" alt="Logout" style="width: 18px; height: 18px;">
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+        <div class="top-bar bar">
+            <div class="container">
+                <div class="logo child">
+                    <img src="{% static 'images/logo.webp' %}" alt="">
+                </div>
+                <div class="header-section child">
+                    <div class="header_sections search">
+                        <input type="text" placeholder="Search product" id="search">
+                        <button id="search-btn">
+                            <img src="{% static 'images/search.png' %}" alt="">
+                        </button>
+                    </div>
+                    <div class="header_sections profile">
+                        <img src="" alt="user image">
+
+                        <p style="
+                                    font-size: 1rem;
+                                    color: white;
+                                    font-weight: bolder;
+                                    font-family: 'Times New Roman';
+                                    margin-left: 1rem;"   >{{ user }}</p>
+                    </div>
+                    <div class="header_sections cart">
+                        <a href=""><img src="{% static 'images/shopping-cart.png' %}" alt=""></a></a>
+                    </div>
+                    <div class="header_sections orders">
+                        <a href=""></a>
+                    </div>
+                    <div class="header_sections">
+                        <label for="options">Categories</label>
+                            <select id="options" name="options">
+                                {% for category, products in category_products.items %}
+                                    <option value="{% url 'category' category.title %}">{{ category }}</option>
+                                {% endfor %}
+                            </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="products">
+        {% block content %}
+
+        {% endblock %}
+    </section>
+   <script src="{% static 'script/script.js' %}"></script>
+</body>
+</html>

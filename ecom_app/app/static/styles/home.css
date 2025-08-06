@@ -1,0 +1,234 @@
+/* Featured Product Section */
+.top-product {
+  margin: 1.5rem auto;
+  width: 90%;
+  max-width: 1200px;
+  background: white;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--box-shadow);
+  transition: var(--transition);
+}
+
+.top-product:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.top-product-container {
+  display: flex;
+  height: 350px;
+}
+
+.product-img {
+  flex: 1;
+  height: 100%;
+  overflow: hidden;
+}
+
+.product-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.top-product:hover .product-img img {
+  transform: scale(1.03);
+}
+
+.product-details {
+  flex: 1;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.product-details h2 {
+  font-size: 1.6rem;
+  color: var(--text-dark);
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  position: relative;
+  padding-bottom: 0.75rem;
+}
+
+.product-details h2::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 40px;
+  height: 3px;
+  background-color: var(--primary-color);
+  transition: width 0.3s ease;
+}
+
+.top-product:hover .product-details h2::after {
+  width: 80px;
+}
+
+.product-details p {
+  font-size: 0.95rem;
+  color: var(--gray-medium);
+  line-height: 1.6;
+}
+
+/* Product Grid */
+.categories {
+  width: 90%;
+  max-width: 1200px;
+  margin: 2.5rem auto;
+}
+
+.category-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.category-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.category-item {
+  background: white;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--box-shadow);
+  transition: var(--transition);
+  height: 100%;
+  transform: translateY(0);
+  /* Fix for animation causing initial opacity issue */
+  opacity: 1;
+}
+
+.category-item:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+}
+
+.item-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.item-image {
+  height: 180px;
+  overflow: hidden;
+  position: relative;
+}
+
+.item-image::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to bottom, transparent 70%, rgba(0, 0, 0, 0.05));
+}
+
+.item-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.category-item:hover .item-image img {
+  transform: scale(1.08);
+}
+
+.item-details {
+  padding: 1.25rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.item-details h2 {
+  font-size: 1rem;
+  color: var(--text-dark);
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.item-details p {
+  font-size: 0.85rem;
+  color: var(--gray-medium);
+  line-height: 1.5;
+  margin-bottom: 1rem;
+  flex-grow: 1;
+  display: -webkit-box;
+  /* -webkit-line-clamp: 3; */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Add to Cart Button */
+.add-to-cart {
+  display: block;
+  background-color: var(--primary-color);
+  color: white;
+  padding: 0.6rem 0;
+  border-radius: var(--border-radius);
+  text-align: center;
+  font-weight: 500;
+  font-size: 0.85rem;
+  transition: var(--transition);
+  margin-top: auto;
+  /* Ensure button is visible */
+  opacity: 1;
+  position: relative;
+  z-index: 1;
+}
+
+.category-item:hover .add-to-cart {
+  background-color: var(--primary-dark);
+}
+
+/* Price Tag */
+.price-tag {
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 2rem;
+  color: var(--gray-medium);
+}
+
+/* Animations - Modified to prevent hiding elements */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Apply animation but ensure items are visible by default */
+.category-item {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+/* Delay animations for each item */
+.category-list a:nth-child(1) .category-item { animation-delay: 0.05s; }
+.category-list a:nth-child(2) .category-item { animation-delay: 0.1s; }
+.category-list a:nth-child(3) .category-item { animation-delay: 0.15s; }
+.category-list a:nth-child(4) .category-item { animation-delay: 0.2s; }
+.category-list a:nth-child(5) .category-item { animation-delay: 0.25s; }
+.category-list a:nth-child(6) .category-item { animation-delay: 0.3s; }
