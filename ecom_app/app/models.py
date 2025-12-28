@@ -61,34 +61,52 @@ class Coupon(models.Model):
         return self.code
 
 class Order(models.Model):
+    # User Information
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     vendor = models.ManyToManyField('auth.User', blank=True, related_name='orders')
     customer = models.ForeignKey('auth.User', null=True, on_delete=models.SET_NULL, related_name='customer_orders')
+    
+    # Order Information
     order_id = models.CharField(unique=True, default=unique_id, max_length=100)
     payment_status = models.CharField(max_length=100, default="Processing")
     payment_method = models.CharField(max_length=100, default="None")
     order_status = models.CharField(max_length=100, default="Processing")
-    coupon = models.ForeignKey(Coupon, null=True, on_delete=models.SET_NULL)
+    coupon = models.ForeignKey(Coupon, null=True, blank=True, on_delete=models.SET_NULL)
     payment_id = models.CharField(max_length=50, blank=True)
     date = models.DateTimeField(default=timezone.now)
-    total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00) 
+    total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    
+    # ✅ NEW SHIPPING INFORMATION FIELDS
+    first_name = models.CharField(max_length=100, blank=True, null=True)
+    last_name = models.CharField(max_length=100, blank=True, null=True)
+    email = models.EmailField(blank=True, null=True)
+    phone = models.CharField(max_length=20, blank=True, null=True)
+    address = models.TextField(blank=True, null=True)
+    city = models.CharField(max_length=100, blank=True, null=True)
+    postal_code = models.CharField(max_length=20, blank=True, null=True)
+    notes = models.TextField(blank=True, null=True)
+    
     class Meta:
         verbose_name_plural = "Orders"
-        ordering = ['date']
+        ordering = ['-date']  # Changed to show newest first
 
     def __str__ (self):
         return self.order_id
     
     def order_items(self):
-        return OrderItem.objects.filter(order = self)
+        return OrderItem.objects.filter(order=self)
+    
+    def get_total(self):
+        """Calculate total from order items"""
+        return sum(item.price * item.quantity for item in self.order_items())
 
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
     order_status = models.CharField(default='Pending', max_length=100)
     shipping_services = models.CharField(max_length=100, default='None')
     tracking_id = models.CharField(max_length=100, unique=True, default=unique_id)
-    product = models.ForeignKey(Product,  on_delete=models.SET_NULL, null=True )
-    vendor = models.ForeignKey('auth.User',  on_delete=models.SET_NULL, null=True , related_name='vendor_orders')
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
+    vendor = models.ForeignKey('auth.User', on_delete=models.SET_NULL, null=True, related_name='vendor_orders')
     price = models.DecimalField(max_digits=10, decimal_places=2)
     quantity = models.IntegerField()
     total_products = models.IntegerField()
@@ -96,6 +114,10 @@ class OrderItem(models.Model):
 
     def __str__ (self):
         return self.tracking_id
+    
+    def get_total(self):
+        """Calculate total for this order item"""
+        return self.price * self.quantity
 
 RATTING = (
     (1, '★'),
@@ -117,7 +139,7 @@ class Review(models.Model):
 class Gallery(models.Model):
     product = models.ForeignKey(Product, null=True, on_delete=models.SET_NULL)
     image = models.FileField(verbose_name='image', default='gallery.jpg')
-    content = models.CharField(unique=True, max_length=100, default=unique_id )
+    content = models.CharField(unique=True, max_length=100, default=unique_id)
 
     def __str__ (self):
         return f"Gallery for {self.product.name if self.product else 'Unknown'}"
@@ -139,21 +161,18 @@ class MyCart(models.Model):
 
     def __str__(self):
         return f'{self.cart_id} - {self.product.name if self.product else "No Product"}'
+    
+    def get_total(self):
+        """Calculate total for this cart item"""
+        return self.price * self.quantity
+
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     image = models.ImageField(upload_to='user_images/', null=True, blank=True, default='user_images/default.jpg')
+    phone = models.CharField(max_length=15, blank=True, null=True)
+    address = models.CharField(max_length=255, blank=True, null=True)
+    bio = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return f"Profile of {self.user.username}"
-
-# class UserImage(models.Model):
-#     user = models.ForeignKey(User, on_delete=models.CASCADE)
-#     image = models.ImageField(null=True, blank=True, upload_to='user_images')
-
-#     def delete(self):
-#         self.image.delete()
-#         super().delete()
-
-#     def __str__(self):
-#         return self.user
+        return f"{self.user.username}'s Profile"

@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from .models import Product,Category, MyCart, Order, OrderItem, UserProfile
 from reportlab.pdfgen import canvas
 from .forms import MyCartForm
+from .forms import UserUpdateForm, UserProfileForm
 from django.contrib.auth.forms import UserCreationForm
 # Create your views here.
 
@@ -34,6 +35,33 @@ def login_view(request):
             return redirect(next_url)
         error_message = "invalid credentials"
     return render(request, "index.html", {'error_message':error_message})
+
+
+
+@login_required
+def profile_view(request):
+    user = request.user
+    profile = user.profile  
+
+    if request.method == 'POST':
+        user_form = UserUpdateForm(request.POST, instance=user)
+        profile_form = UserProfileForm(request.POST, request.FILES, instance=profile)
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            messages.success(request, 'Your profile has been updated!')
+            return redirect('profile')
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        user_form = UserUpdateForm(instance=user)
+        profile_form = UserProfileForm(instance=profile)
+
+    return render(request, 'profile.html', {
+        'user_form': user_form,
+        'profile_form': profile_form,
+        'profile': profile
+    })
 
 @csrf_exempt
 def logout_view(request):
@@ -109,39 +137,114 @@ def product_detail_view(request, pk):
     product = get_object_or_404(Product, pk=pk)  
     return render(request, 'product_details.html', {'product': product})
 
-@csrf_exempt
+
+@login_required
 def checkout(request):
+    cart_items = MyCart.objects.filter(user=request.user)
+    
+    if not cart_items.exists():
+        messages.error(request, "Your cart is empty!")
+        return redirect('cart')
+    
+    # Calculate total
+    total_price = sum(item.price * item.quantity for item in cart_items)
+    
     if request.method == "POST":
-        cart_items = MyCart.objects.filter(user=request.user)  # Fetch user's cart items
-
-        if not cart_items.exists():
-            return HttpResponse("Your cart is empty!", status=400)
-
-        order = Order.objects.create(total_price=0)  # Create order
-        total_price = 0
-
-        for item in cart_items:
-            item_price = item.product.price * item.quantity  # ✅ Calculate item price
-
-            OrderItem.objects.create(
-                order=order,
-                product=item.product,
-                price=item.product.price,  # ✅ Ensure 'price' is stored
-                quantity=item.quantity,
-                total_products=len(cart_items),
-                tracking_id=generate_tracking_id(),  # ✅ You need a function for unique tracking IDs
+        # Get form data
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        email = request.POST.get('email')
+        phone = request.POST.get('phone')
+        address = request.POST.get('address')
+        city = request.POST.get('city')
+        postal_code = request.POST.get('postal_code', '')
+        notes = request.POST.get('notes', '')
+        payment_method = request.POST.get('payment_method')
+        
+        # ✅ Validate payment method
+        if not payment_method:
+            messages.error(request, "Please select a payment method!")
+            context = {
+                'cart_items': cart_items,
+                'total_price': total_price,
+            }
+            return render(request, "checkout.html", context)
+        
+        # ✅ Validate required fields
+        if not all([first_name, last_name, email, phone, address, city]):
+            messages.error(request, "Please fill in all required fields!")
+            context = {
+                'cart_items': cart_items,
+                'total_price': total_price,
+            }
+            return render(request, "checkout.html", context)
+        
+        try:
+            # Create order with shipping information
+            order = Order.objects.create(
+                user=request.user,
+                customer=request.user,
+                first_name=first_name,
+                last_name=last_name,
+                email=email,
+                phone=phone,
+                address=address,
+                city=city,
+                postal_code=postal_code,
+                notes=notes,
+                payment_method=payment_method or 'cod',  # ✅ Fallback to 'cod'
+                payment_status='Processing',
+                order_status='Processing',
+                total_price=total_price,
             )
+            
+            # Create order items
+            for item in cart_items:
+                OrderItem.objects.create(
+                    order=order,
+                    product=item.product,
+                    price=item.product.price,
+                    quantity=item.quantity,
+                    total_products=len(cart_items),
+                    tracking_id=generate_tracking_id(),
+                    order_status='Pending',
+                )
+            
+            # Clear cart
+            cart_items.delete()
+            
+            messages.success(request, f"Order {order.order_id} placed successfully!")
+            return redirect('order_confirmation', order_id=order.id)
+            
+        except Exception as e:
+            messages.error(request, f"Error processing order: {str(e)}")
+            context = {
+                'cart_items': cart_items,
+                'total_price': total_price,
+            }
+            return render(request, "checkout.html", context)
+    
+    # GET request - show checkout form
+    context = {
+        'cart_items': cart_items,
+        'total_price': total_price,
+    }
+    return render(request, "checkout.html", context)
 
-            total_price += item_price
 
-        order.total_price = total_price
-        order.save()
+def order_confirmation(request, order_id):
+    order = Order.objects.get(id=order_id, user=request.user)
+    order_items = OrderItem.objects.filter(order=order)
+    
+    context = {
+        'order': order,
+        'order_items': order_items,
+    }
+    return render(request, 'checkout.html', context)
 
-        cart_items.delete()  # ✅ Clear cart after checkout
-
-        return generate_invoice(order)
-
-    return render(request, "checkout.html")
+def download_invoice(request, order_id):
+    order = Order.objects.get(id=order_id, user=request.user)
+    return generate_invoice(order)
 
 import uuid
 

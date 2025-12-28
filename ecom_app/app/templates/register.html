@@ -7,42 +7,411 @@
     <link rel="stylesheet" href="{% static 'styles/main.css' %}">
     <link rel="icon" href="{% static 'images/logo.webp'%}">
     <title>Register | ShopSphere</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .register-container {
+            max-width: 1100px;
+            width: 100%;
+            background: #fff;
+            border-radius: 24px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 45% 55%;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .register-sidebar {
+            background: linear-gradient(135deg, #000 0%, #2d2d2d 100%);
+            color: #fff;
+            padding: 4rem 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .register-sidebar::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+            animation: rotate 60s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .sidebar-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo-container {
+            margin-bottom: 2.5rem;
+        }
+
+        .logo-container img {
+            width: 120px;
+            height: 120px;
+            filter: brightness(0) invert(1);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .sidebar-title {
+            font-size: 2.25rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            letter-spacing: -1px;
+        }
+
+        .sidebar-subtitle {
+            font-size: 1.1rem;
+            color: #b0b0b0;
+            line-height: 1.6;
+            margin-bottom: 3rem;
+        }
+
+        .benefits-list {
+            text-align: left;
+            width: 100%;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        .benefit-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .benefit-text {
+            font-size: 0.95rem;
+            color: #e0e0e0;
+        }
+
+        .register-form-container {
+            padding: 4rem 3.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .form-header {
+            margin-bottom: 2.5rem;
+        }
+
+        .form-header h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #000;
+            margin-bottom: 0.5rem;
+            letter-spacing: -1px;
+        }
+
+        .form-header p {
+            color: #6a6a6a;
+            font-size: 1rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #2d2d2d;
+            font-size: 0.9rem;
+        }
+
+        .input-group input,
+        .input-group textarea,
+        .input-group select {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid #e5e5e5;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .input-group input:focus,
+        .input-group textarea:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        .input-group small {
+            display: block;
+            margin-top: 0.35rem;
+            color: #8a8a8a;
+            font-size: 0.85rem;
+        }
+
+        .alert-error {
+            background: #fee;
+            border: 1px solid #fcc;
+            color: #c33;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            width: 100%;
+            background: linear-gradient(135deg, #000 0%, #2d2d2d 100%);
+            color: #fff;
+            padding: 1rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e5e5e5;
+            color: #6a6a6a;
+            font-size: 0.95rem;
+        }
+
+        .form-footer a {
+            color: #667eea;
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .form-footer a:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+
+        .password-strength {
+            margin-top: 0.5rem;
+            height: 4px;
+            background: #e5e5e5;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .password-strength-bar {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, #ff4444, #ffbb33, #00C851);
+            transition: width 0.3s ease;
+        }
+
+        .back-to-home {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: transform 0.2s ease;
+        }
+
+        .back-to-home:hover {
+            transform: translateX(-5px);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 968px) {
+            .register-container {
+                grid-template-columns: 1fr;
+                max-width: 500px;
+            }
+
+            .register-sidebar {
+                padding: 3rem 2rem;
+            }
+
+            .benefits-list {
+                display: none;
+            }
+
+            .register-form-container {
+                padding: 3rem 2rem;
+            }
+
+            body {
+                padding: 1rem;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .form-header h2 {
+                font-size: 1.75rem;
+            }
+
+            .sidebar-title {
+                font-size: 1.75rem;
+            }
+
+            .register-form-container {
+                padding: 2rem 1.5rem;
+            }
+
+            .register-sidebar {
+                padding: 2rem 1.5rem;
+            }
+        }
+    </style>
 </head>
-<body style="background: var(--background-light);">
-    <div class="card fade-in" style="width: 100%; max-width: 900px; margin: 3rem auto; display: flex; min-height: 500px; overflow: hidden;">
-        <div style="flex: 1; background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%); color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px; text-align: center;">
-            <p style="font-size: 2rem; font-weight: 600; margin-bottom: 30px; letter-spacing: 1px;">JOIN SHOPSPHERE</p>
-            <img src="{% static 'images/logo.webp' %}" alt="ShopSphere Logo" style="max-width: 180px; margin-top: 20px; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1)); transition: var(--transition);">
-            <p style="font-size: 1rem; margin-top: 30px; font-weight: 400;">Create an account and start shopping today</p>
-        </div>
-        <form action="{% url 'register' %}" method="POST" class="fade-in" style="flex: 1; padding: 50px 40px; display: flex; flex-direction: column; justify-content: center; background: #fff;">
-            {% csrf_token %}
-            <h2 style="margin-bottom: 30px; font-size: 2rem; color: var(--primary-color); font-weight: 700;">Create Account</h2>
-            {% for field in form %}
-                <div class="input-group" style="margin-bottom: 1.2rem;">
-                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                    {{ field }}
-                    {% if field.help_text %}
-                        <small style="color: var(--gray-medium);">{{ field.help_text }}</small>
-                    {% endif %}
-                    {% for error in field.errors %}
-                        <div class="alert alert-error fade-in" style="margin-top: 0.5rem;">{{ error }}</div>
-                    {% endfor %}
+<body>
+    <a href="/" class="back-to-home">
+        <span>←</span> Back to Home
+    </a>
+
+    <div class="register-container">
+        <div class="register-sidebar">
+            <div class="sidebar-content">
+                <div class="logo-container">
+                    <img src="{% static 'images/logo.webp' %}" alt="ShopSphere Logo">
                 </div>
-            {% endfor %}
-            <button type="submit" class="btn btn-primary pop" style="width: 100%;">Create Account</button>
-            {% if form.non_field_errors %}
-                <div class="alert alert-error fade-in" style="margin-top: 1rem;">
-                    {% for error in form.non_field_errors %}
-                        <div>{{ error }}</div>
-                    {% endfor %}
+                <h1 class="sidebar-title">Join ShopSphere</h1>
+                <p class="sidebar-subtitle">Create your account and start exploring premium sneakers from the world's top brands</p>
+                
+                <div class="benefits-list">
+                    <div class="benefit-item">
+                        <div class="benefit-icon">✓</div>
+                        <div class="benefit-text">Access to exclusive deals and launches</div>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-icon">✓</div>
+                        <div class="benefit-text">Fast and secure checkout process</div>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-icon">✓</div>
+                        <div class="benefit-text">Track your orders in real-time</div>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-icon">✓</div>
+                        <div class="benefit-text">Personalized recommendations</div>
+                    </div>
                 </div>
-            {% endif %}
-            <div style="text-align: center; font-size: 14px; color: var(--gray-medium); margin-top: 20px;">
-                Already have an account? <a href="{% url 'login' %}" style="color: var(--primary-color); font-weight: 500;">Sign In</a>
             </div>
-        </form>
+        </div>
+
+        <div class="register-form-container">
+            <div class="form-header">
+                <h2>Create Account</h2>
+                <p>Fill in your details to get started</p>
+            </div>
+
+            <form action="{% url 'register' %}" method="POST">
+                {% csrf_token %}
+                
+                {% for field in form %}
+                    <div class="input-group">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.help_text %}
+                            <small>{{ field.help_text }}</small>
+                        {% endif %}
+                        {% for error in field.errors %}
+                            <div class="alert-error">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+
+                <button type="submit" class="btn-primary">Create Account</button>
+
+                {% if form.non_field_errors %}
+                    <div class="alert-error" style="margin-top: 1rem;">
+                        {% for error in form.non_field_errors %}
+                            <div>{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div class="form-footer">
+                    Already have an account? <a href="{% url 'login' %}">Sign in here</a>
+                </div>
+            </form>
+        </div>
     </div>
+
     <script src="{% static 'script/login.js' %}"></script>
 </body>
 </html>
